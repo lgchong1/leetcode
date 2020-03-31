@@ -1,3 +1,9 @@
+# Code created 3/30/20
+# by Lawrence Chong
+# Based on solution algorithm in leetcode.
+
+
+
 class Solution:
 	def hasCycle(self, head: ListNode) -> bool:
 		if head is None or head.next is None:

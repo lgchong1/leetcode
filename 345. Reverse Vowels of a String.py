@@ -1,4 +1,7 @@
 # 345. Reverse Vowels of a String.py
+# by L.Chong
+# 4/13/20
+
 # Brute force Impl
 # Time : O(N)
 # Space: O(N)

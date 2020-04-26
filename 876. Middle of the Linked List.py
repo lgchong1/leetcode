@@ -1,4 +1,4 @@
-# 867. Middle of the Linked List
+# 876. Middle of the Linked List
 # by L.Chong, 4/26/20
 
 # Time : O(N)

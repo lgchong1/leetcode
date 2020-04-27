@@ -1,8 +1,8 @@
 # 21. Merge Two Sorted Lists
-# by calkehe on Leetcode
+#by L.Chong, 4/26/20
 
 # Time : O(N)
-# Space: O(1)
+# Space: O(N)
 
 # Definition for singly-linked list.
 # class ListNode:
@@ -13,16 +13,20 @@
 class Solution:
     def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
         
-        head = cur = ListNode(0)
-
+        head = output = ListNode()
+        
         while l1 and l2:
             if l1.val < l2.val:
-                cur.next = l1
+                output.next = l1
                 l1 = l1.next
             else:
-                cur.next = l2
+                output.next = l2
                 l2 = l2.next
-            cur = cur.next
-        cur.next = l1 or l2
-        
+            output = output.next
+
+        if l2:
+            output.next = l2
+        elif l1:
+            output.next = l1
+            
         return head.next

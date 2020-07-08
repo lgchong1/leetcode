@@ -38,7 +38,8 @@ class Skiplist(object):
             if not cur.next and not cur.below:
                 output += " END"
                 break
-            elif cur.next == None:
+            elif cur.next == None or\
+            target < cur.next.val:
                 cur = cur.below
                 output += " v "
             elif cur.next.val == target:
@@ -48,9 +49,6 @@ class Skiplist(object):
             elif target > cur.next.val:
                 output += " -> "
                 cur = cur.next
-            elif target < cur.next.val:
-                output += " v "
-                cur = cur.below
             else:
                 print("\thow did i get here")
 
@@ -238,7 +236,7 @@ if __name__ == "__main__":
     skip = Skiplist()
 
     for x in range(16):
-        skip.add(x)
+        skip.add(x-5)
         skip.printList()
 
     for x in range(20):

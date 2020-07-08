@@ -11,7 +11,7 @@ class Node(object):
         self.next = next
         self.below = below
         
-        if DEBUG: print("Node.__init__({}, {}, {})".format(val,next,below))
+        #if DEBUG: print("Node.__init__({}, {}, {})".format(val,next,below))
             
             
 class Skiplist(object):
@@ -20,23 +20,57 @@ class Skiplist(object):
         self.head = Node()
         self.levels = 1
         
-        if DEBUG: print("Skiplist instantiated")   
+        #if DEBUG: print("Skiplist instantiated")   
         
     def search(self, target):
+        """ Finds if the target is in the Skiplist.
         """
-        :type target: int
-        :rtype: bool
-        """
+        if DEBUG: print('search({})'.format(target))
+
         result = False
 
+        cur = self.head
+    
+        output = "\tPath: "
+        
+        while cur:
+            output += "{}".format(cur.val)
+            if not cur.next and not cur.below:
+                output += " END"
+                break
+            elif cur.next == None:
+                cur = cur.below
+                output += " v "
+            elif cur.next.val == target:
+                result = True
+                output += " -> {}! FOUND".format(target)
+                break
+            elif target > cur.next.val:
+                output += " -> "
+                cur = cur.next
+            elif target < cur.next.val:
+                output += " v "
+                cur = cur.below
+            else:
+                print("\thow did i get here")
+
+        if DEBUG: print(output)
+        if DEBUG: print('\t{}'.format(result))
         return result
         
     def add(self, num):
-        """
-        :type num: int
-        :rtype: None
+        """ Adds a new node with the value num in the Skiplist.
+
+            Given a value num, will flip coins and count the number of consecutive
+            heads. Will proceed to add a new node with val num to that many levels.
+            Each new node will be connected together vertically
+
+            Args:
+                num: some numeric value
         """
         if DEBUG: print('add({})'.format(num))
+        
+        # Calculates how many rows to add if necessary
         
         heads = self.__numHeads()
         
@@ -52,13 +86,29 @@ class Skiplist(object):
         skip = self.levels - heads
         if DEBUG: print('\twill add {} to the bottom {} levels and will skip top {} levels'.format(num,heads,skip))
 
+        # Starting from the top, determines how many rows to skip before adding in new nodes
+      
         cur = self.head
         for _ in range(skip):
             cur = cur.below
-        while cur:
-            self.__addToLevel(cur,num)
-            cur = cur.below
+    
+        col = []        
+
+        # Adds node to each applicable level
         
+        while cur:
+            new = self.__addToLevel(cur,num)
+            col.append(new)
+            cur = cur.below
+
+        # Stitches all newly added nodes together across levels
+    
+        last = None
+        while col:
+            node = col.pop()
+            node.below = last
+            last = node        
+            
     def erase(self, num):
         """
         :type num: int
@@ -79,13 +129,13 @@ class Skiplist(object):
     def __addToLevel(self, head, value):
         """Inserts a new node into a level, returning the new node."""
 
-        if DEBUG: print('\t__addToLevel({})'.format(value))
+        #if DEBUG: print('\t__addToLevel({})'.format(value))
 
         cur = head
         
         if cur.next == None:
-            self.__insert(cur,value)
-            return cur
+            output = self.__insert(cur,value)
+            return output
         
         #cur = cur.next
 
@@ -93,12 +143,12 @@ class Skiplist(object):
             if cur.next == None or \
                 cur.val == value or\
                 cur.next.val > value:
-                self.__insert(cur,value)
-                output = cur
+                output = self.__insert(cur,value)
+                #output = cur
                 break
             cur = cur.next
         return output
-             
+        
     def __insert(self, node, value):
         """ Inserts a new node after the passed node, returning the new node.
 
@@ -125,7 +175,7 @@ class Skiplist(object):
                                 L>val
 
         """
-        if DEBUG: print('\t__insert({})'.format(value))
+        #if DEBUG: print('\t__insert({})'.format(value))
 
         new = Node(value, node.next)
         node.next = new
@@ -140,8 +190,7 @@ class Skiplist(object):
         return count
         
     def __coinFlip(self):
-        rand = int(random.random()*10) % 2
-        return rand
+        return random.choice((0,1))
 
     def printList(self):
         # print entire skiplist
@@ -159,6 +208,7 @@ class Skiplist(object):
         cur = head
 
         while cur:
+            #if DEBUG: print('\t\tval: {} addr:{} below: {} next: {}'.format(cur.val,cur,cur.below,cur.next))
             level.append(cur.val)
             cur = cur.next
 
@@ -186,12 +236,11 @@ class Skiplist(object):
 
 if __name__ == "__main__":
     skip = Skiplist()
-    skip.printList()
-    skip.add(5)
-    skip.printList()
-    skip.add(6)
-    skip.printList()
-    skip.add(3)
-    skip.printList()
-    skip.add(2)
-    skip.printList()
+
+    for x in range(16):
+        skip.add(x)
+        skip.printList()
+
+    for x in range(20):
+        skip.search(x)
+

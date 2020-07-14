@@ -1,9 +1,9 @@
 # 1206. Design Skiplist
-# by L. Chong, 6/30/20
+# by L. Chong, 6/30/20 - 7/14/20
 
 import random
 
-DEBUG = True
+DEBUG = False
 
 class Node(object):
     def __init__(self, val=None, next=None, below = None):
@@ -112,7 +112,18 @@ class Skiplist(object):
         :type num: int
         :rtype: bool
         """
-        pass
+        found = False
+
+        cur = self.head
+
+        while cur:
+            found = self.__removeFromLevel(cur,num) or found
+            cur = cur.below
+
+        if found:
+            self.__cleanup()
+
+        return found
     
     #HELPERS
     
@@ -179,6 +190,30 @@ class Skiplist(object):
         node.next = new
         return new
 
+    def __removeFromLevel(self,head,value):
+        if DEBUG: print('\t__removeFromLevel({})'.format(value))
+        
+        cur = head
+        
+        if cur.next == None:
+            return False
+
+        while (cur.next):
+            if cur.next.val > value:
+                return False
+            if cur.next.val == value:
+                if DEBUG: print('\t\tremoving {} from level'.format(value))
+                self.__removeNext(cur)
+                return True
+            cur = cur.next      
+        
+        return False
+
+    def __removeNext(self,node):
+        temp = node.next
+        node.next = node.next.next
+        del temp
+
     def __numHeads(self):
         """Returns the number of consecutive heads from coin flips (at least 1)."""
         count = 1
@@ -226,19 +261,62 @@ class Skiplist(object):
             count +=1
         return count
 
+    def __cleanup(self):
+        """Removes empty levels from the top of the Skiplist."""
+        while self.levels > 1 and self.head.next == None:
+            temp = self.head
+            self.head = self.head.below
+            del temp
+            self.levels -=1
+
 # Your Skiplist object will be instantiated and called as such:
 # obj = Skiplist()
 # param_1 = obj.search(target)
 # obj.add(num)
 # param_3 = obj.erase(num)
 
+def menu(skip):
+    while(True):
+        print("\nWat do:")
+        print("\t1 - add")
+        print("\t2 - search")
+        print("\t3 - erase")
+        option = -1
+        while option not in (1,2,3):
+            print("Please choose a valid option:")
+            option = int(input())
+        print("param: ")
+        param = int(input())
+
+        if option == 1:
+            skip.add(param)
+            print("{} added".format(param))
+        elif option == 2:
+            result = skip.search(param)
+            if result:
+                print("{} found".format(param))
+            else:
+                print("{} not found".format(param))
+        elif option == 3:
+            result = skip.erase(param)
+            if result:
+                print("{} erased".format(param))
+            else:
+                print("{} not erased".format(param))
+        else:
+            print("invalid option")
+        
+        if option == 1 or result:
+            skip.printList()
+
 if __name__ == "__main__":
     skip = Skiplist()
+
+    menu(skip)
 
     for x in range(16):
         skip.add(x-5)
         skip.printList()
 
-    for x in range(20):
-        skip.search(x)
+    skip.erase(0)
 

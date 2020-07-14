@@ -253,6 +253,7 @@ class Skiplist(object):
         else:
             print(space + "Empty Level")
 
+    '''
     def countRows(self):
         count = 1
         cur = self.head
@@ -260,6 +261,7 @@ class Skiplist(object):
             cur = cur.below
             count +=1
         return count
+    '''
 
     def __cleanup(self):
         """Removes empty levels from the top of the Skiplist."""
@@ -275,18 +277,26 @@ class Skiplist(object):
 # obj.add(num)
 # param_3 = obj.erase(num)
 
+def intro():
+    print("Skiplist by L.Chong")
+
 def menu(skip):
     while(True):
         print("\nWat do:")
         print("\t1 - add")
         print("\t2 - search")
         print("\t3 - erase")
-        option = -1
-        while option not in (1,2,3):
+        print("\t4 - print")
+
+        print("Please choose an option:")
+        option = int(input())
+
+        while option not in (1,2,3,4):
             print("Please choose a valid option:")
             option = int(input())
-        print("param: ")
-        param = int(input())
+        if option in (1,2,3):
+            print("param: ")
+            param = int(input())
 
         if option == 1:
             skip.add(param)
@@ -303,13 +313,15 @@ def menu(skip):
                 print("{} erased".format(param))
             else:
                 print("{} not erased".format(param))
+        elif option ==4:
+            skip.printList()
         else:
             print("invalid option")
         
-        if option == 1 or result:
-            skip.printList()
 
 if __name__ == "__main__":
+    intro()
+
     skip = Skiplist()
 
     menu(skip)
